@@ -1,14 +1,13 @@
 package main
 
 import (
-	"strconv"
+	"fmt"
 	"io/ioutil"
-	"net"
 	"net/http"
 )
 
 type HostPort struct {
-	host string 
+	host string
 	port uint16
 }
 
@@ -22,8 +21,12 @@ func NewServer(addr HostPort) *Server {
 	}
 }
 
+func makeURL(hp HostPort, uri string) string {
+	return fmt.Sprintf("http://%s:%d%s", hp.host, hp.port, uri)
+}
+
 func (s *Server) Get(uri string) ([]byte, error) {
-	resp, err := http.Get(net.JoinHostPort(s.addr.host, strconv.FormatUint(uint64(s.addr.port), 10)))
+	resp, err := http.Get(makeURL(s.addr, uri))
 	if err != nil {
 		return nil, err
 	}
